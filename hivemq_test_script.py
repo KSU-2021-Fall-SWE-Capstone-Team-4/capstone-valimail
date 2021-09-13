@@ -1,5 +1,5 @@
-from mqtt_sender import MQTTSender
-from mqtt_listener import MQTTListener
+from lib.mqtt_sender import MQTTSender
+from lib.mqtt_listener import MQTTListener
 
 # Create the client
 client1 = MQTTListener()

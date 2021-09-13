@@ -1,4 +1,4 @@
-from mqtt_client import MQTTClient
+from lib.mqtt_client import MQTTClient
 from config import MQTT_LISTENER_USERNAME
 from config import MQTT_LISTENER_PASSWORD
 from config import MQTT_LISTENER_HOSTNAME
