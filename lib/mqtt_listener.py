@@ -12,9 +12,14 @@ class MQTTListener(MQTTClient):
         Initializes the MQTTListener class.
         All variables needed are pulled from config.py.
         """
+        # Perform the initial connection.
         self._connect(MQTT_LISTENER_USERNAME, MQTT_LISTENER_PASSWORD, MQTT_LISTENER_HOSTNAME, MQTT_LISTENER_PORT)
         self.client.on_subscribe = self.on_subscribe
         self.client.on_message = self.on_message
+
+        # Subscribe to relevant topics.
+        for topic in MQTT_LISTENER_TOPICS:
+            self.subscribe(topic)
 
     def subscribe(self, topic, qos=0, options=None, properties=None):
         """

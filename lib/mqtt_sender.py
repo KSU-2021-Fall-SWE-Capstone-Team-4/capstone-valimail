@@ -12,6 +12,7 @@ class MQTTSender(MQTTClient):
         Initializes the MQTTListener class.
         All variables needed are pulled from config.py.
         """
+        # Perform the initial connection.
         self._connect(MQTT_LISTENER_USERNAME, MQTT_LISTENER_PASSWORD, MQTT_LISTENER_HOSTNAME, MQTT_LISTENER_PORT)
         self.client.on_publish = self.on_publish
 
