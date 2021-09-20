@@ -1,6 +1,8 @@
 from lib.mqtt_sender import MQTTSender
 from lib.mqtt_listener import MQTTListener
 from time import sleep
+from dotenv import load_dotenv
+load_dotenv(verbose=True)
 
 # Create the client
 client2 = MQTTSender()

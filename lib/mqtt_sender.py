@@ -1,9 +1,5 @@
+import os
 from lib.mqtt_client import MQTTClient
-from config import MQTT_LISTENER_USERNAME
-from config import MQTT_LISTENER_PASSWORD
-from config import MQTT_LISTENER_HOSTNAME
-from config import MQTT_LISTENER_PORT
-from config import MQTT_LISTENER_TOPICS
 
 class MQTTSender(MQTTClient):
 
@@ -13,7 +9,10 @@ class MQTTSender(MQTTClient):
         All variables needed are pulled from config.py.
         """
         # Perform the initial connection.
-        self._connect(MQTT_LISTENER_USERNAME, MQTT_LISTENER_PASSWORD, MQTT_LISTENER_HOSTNAME, MQTT_LISTENER_PORT)
+        self._connect(os.environ['MQTT_SENDER_USERNAME'],
+                      os.environ['MQTT_SENDER_PASSWORD'],
+                      os.environ['MQTT_SENDER_HOSTNAME'],
+                      int(os.environ['MQTT_SENDER_PORT']))
         self.client.on_publish = self.on_publish
 
     def publish(self, topic, payload, qos=0, retain=False, properties=None):
