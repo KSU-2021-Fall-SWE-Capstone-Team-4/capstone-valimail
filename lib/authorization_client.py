@@ -1,4 +1,18 @@
+from lib.mqtt_sender import MQTTSender
+
 class AuthorizationClient:
+
+    @staticmethod
+    def initialize():
+        """
+        Initializes the AuthorizationClient.
+        """
+        # Make sure this hasn't been run twice.
+        if hasattr(AuthorizationClient, 'initialized') and AuthorizationClient.initialized:
+            return
+
+        # Create the MQTTSender.
+        AuthorizationClient.sender = MQTTSender()
 
     @staticmethod
     def authorize(message):
@@ -7,3 +21,4 @@ class AuthorizationClient:
         However, this is sprint 1, and we don't need to worry ourselves with that just yet.
         As such, it just passes along the message to the MQTT Sender.
         """
+        AuthorizationClient.sender.publish('my/test/topic', message.payload)

@@ -4,6 +4,7 @@ from config import MQTT_LISTENER_PASSWORD
 from config import MQTT_LISTENER_HOSTNAME
 from config import MQTT_LISTENER_PORT
 from config import MQTT_LISTENER_TOPICS
+from lib.authorization_client import AuthorizationClient
 
 class MQTTListener(MQTTClient):
 
@@ -20,6 +21,9 @@ class MQTTListener(MQTTClient):
         # Subscribe to relevant topics.
         for topic in MQTT_LISTENER_TOPICS:
             self.subscribe(topic)
+
+        # Create own AuthorizationClient.
+        AuthorizationClient.initialize()
 
     def subscribe(self, topic, qos=0, options=None, properties=None):
         """
@@ -71,3 +75,4 @@ class MQTTListener(MQTTClient):
             msg (paho.mqtt.client.MQTTMessage) : The message object.
         """
         print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+        AuthorizationClient.authorize(msg)
