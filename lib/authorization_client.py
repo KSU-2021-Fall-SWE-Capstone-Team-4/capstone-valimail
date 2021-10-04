@@ -21,4 +21,6 @@ class AuthorizationClient:
         However, this is sprint 1, and we don't need to worry ourselves with that just yet.
         As such, it just passes along the message to the MQTT Sender.
         """
+        #x5u in payload contains device id
+        # dane-jwe-jws
         AuthorizationClient.sender.publish('my/test/topic', message.payload)
