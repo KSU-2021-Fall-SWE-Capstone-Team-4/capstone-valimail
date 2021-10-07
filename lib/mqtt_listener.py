@@ -74,4 +74,7 @@ class MQTTListener(MQTTClient):
             msg (paho.mqtt.client.MQTTMessage) : The message object.
         """
         print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
-        AuthorizationClient.authorize(msg)
+
+        if AuthorizationClient.authorized(msg):
+            # Forward the message.
+            AuthorizationClient.sender.publish('my/test/topic', message.payload)

@@ -21,11 +21,23 @@ class AuthorizationClient:
         AuthorizationClient.sender = MQTTSender()
 
     @staticmethod
-    def authorize(message):
+    def authorized(message):
         """
-        Usually this would be where the authorization goes.
-        However, this is sprint 1, and we don't need to worry ourselves with that just yet.
-        As such, it just passes along the message to the MQTT Sender.
+        Determines whether or not a message is authorized.
+        First checks if the dns name is on the whitelist defined in .env.
+        Then checks whether the message itself has a valid TLSA record with the supplied dns name.
+        If it passes all the checks, then True is returned.
+
+        Arguments:
+            message (MQTTMessage) : The message received from the MQTTListener.
+
+        Raises:
+            json.decoder.JSONDecodeError : The message received is not in a valid JSON format.
+            binascii.Error : One or more fields has a non-base64 character in it.
+            dane_discovery.exceptions.TLSAError : No TLSA records for supplied dns name.
+
+        Returns:
+            bool : Whether or not the message is authorized to proceed.
         """
         # First, convert the message into a json file and grab its 'protected' attribute.
         message_payload_json = json.loads(message.payload)
@@ -41,11 +53,10 @@ class AuthorizationClient:
         # Finally, we trim the excess fat off x5u and compare it against the whitelist.
         x5u = Util.get_name_from_dns_uri(x5u)
         if x5u not in os.environ['DNS_WHITELIST'].split(','):
-            return
+            return False
 
         # Now that we know the message is from a whitelisted source, we verify its integrity.
         Authentication.verify(message.payload)
 
         # If no exception has been raised / we have not returned yet, then message passed all the checks.
-        # Forward the message.
-        AuthorizationClient.sender.publish('my/test/topic', message.payload)
+        return True
