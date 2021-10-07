@@ -1,10 +1,6 @@
 from dane_jwe_jws.authentication import Authentication
 
-test_message = "hello yeye!!"
-prikey_path = 'prikey.txt'
-identity_name = "2fcf9ecce81b47d8b7884a7c158ea4a2.s1.eu.hivemq.cloud"
-signed = Authentication.sign(test_message, prikey_path, identity_name)
-print(signed)
+test_message = '{"payload":"SGVsbG8gV29ybGQ","protected":"eyJhbGciOiJSUzI1NiIsIng1dSI6ImRuczovL2tzdS5fZGV2aWNlLnVuaXZlcnNhbGF1dGguY29tP3R5cGU9VExTQSJ9","signature":"YWXJpSG3yUjPu0ipkHInbILzYo2Hy2dbz2hsECzhUVMeGEHeUT4bLFf0w8zYtt9LEekadGTbsxD-8Zb3N5YJEdJVc3L9mmbMcaftxllphps1lZ4q1LH8JzlUtdroj2GkTagVU-uA-S4Yzf964b7HJ2mezc4Ua2dYMVnNJfUhm2je9j4PhCkO9kROT8MU7U6FbY6obWDPUgx94sCw9LI934MIEo-GUvCBc08zlHnneNH2vni1zDV9P4_pgoTyGE_uXMTMnsDIVB0cluklPKD4p1ZtOob0p9oCrJ7L2lJFjEP3-GJ5Qs2s9NqapFEVhz4PohOiucJlKVZesY0nNbMgvw"}'
+validated = Authentication.verify(test_message)
 
-validated = Authentication.verify(signed)
 print(validated)
