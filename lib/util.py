@@ -9,7 +9,11 @@ class Util:
         Raises:
             InvalidDotenvFileError : .env file is either missing or is lacking a required variable.
         """
+        # Required imports
+        from lib.exceptions import InvalidDotenvFileError
+        import os
 
+        # List of variables we should expect to see in every .env file.
         expected_dotenv_vars = [
             'DEBUG', 'DISABLE_SENDER', 'MQTT_LISTENER_USERNAME', 'MQTT_LISTENER_PASSWORD',
             'MQTT_LISTENER_HOSTNAME', 'MQTT_LISTENER_HOSTNAME', 'MQTT_LISTENER_PORT',
@@ -17,14 +21,13 @@ class Util:
             'MQTT_SENDER_HOSTNAME', 'MQTT_SENDER_PORT', 'MQTT_SENDER_TOPIC', 'DNS_WHITELIST'
         ]
 
-        from lib.exceptions import InvalidDotenvFileError
+        # First, check that the .env file does exist.
+        if not os.path.exists('.env'):
+            raise InvalidDotenvFileError('.env file missing from working directory')
 
-        # TODO: Detect when user has not set up .env (possible with os.path.exists i think.)
+        # Then, load .env.
         from dotenv import load_dotenv as dotenv_load
-        dotenv_load(verbose=True)
-
-        # Import os so we can certify that every dotenv variable is in there.
-        import os
+        dotenv_load()
 
         # Detect if any dotenv_vars are missing.
         for dotenv_var in expected_dotenv_vars:
