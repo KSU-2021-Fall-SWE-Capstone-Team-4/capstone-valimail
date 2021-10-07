@@ -2,9 +2,8 @@
 if __name__ == '__main__':
 
     # Load up the .env variables.
-    # TODO: Detect when user has not set up .env
-    from dotenv import load_dotenv
-    load_dotenv(verbose=True)
+    from lib.util import Util
+    Util.load_dotenv()
 
     # Import the MQTTListener.
     # MQTTListener will import AuthorizationClient, which will create its own MQTTSender.
