@@ -46,10 +46,10 @@ class AuthorizationClient:
         protected = message_payload_json['protected']
 
         # Next, convert the protected attribute out of base64.
-        protected = base64.b64decode(protected + '=')
+        protected = base64.b64decode(protected)
 
         # Then, we make the protected attribute into a dict as well and grab its 'x5u' attribute.
-        protected_json = json.loads(str(protected))
+        protected_json = json.loads(protected)
         x5u = protected_json['x5u']
 
         # Finally, we trim the excess fat off x5u and compare it against the whitelist.
