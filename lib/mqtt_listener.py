@@ -21,7 +21,7 @@ class MQTTListener(MQTTClient):
         for topic in os.environ['MQTT_LISTENER_TOPICS'].split(','):
             self.subscribe(topic)
 
-        # Create own AuthorizationClient.
+        # Initialize the AuthorizationClient.
         AuthorizationClient.initialize()
 
     def subscribe(self, topic, qos=0, options=None, properties=None):
@@ -77,4 +77,4 @@ class MQTTListener(MQTTClient):
 
         if AuthorizationClient.authorized(msg):
             # Forward the message.
-            AuthorizationClient.sender.publish('my/test/topic', message.payload)
+            AuthorizationClient.sender.publish(message.payload)
