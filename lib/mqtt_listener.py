@@ -1,19 +1,32 @@
 from lib.util import environment
 from lib.mqtt_client import MQTTClient
 from lib.authorization_client import AuthorizationClient
+import logging
 
 class MQTTListener(MQTTClient):
 
     def __init__(self):
         """
         Initializes the MQTTListener class.
-        All variables needed are pulled from config.py.
+        All variables needed are pulled from .env.
         """
+        # Sets the client_type for MQTTClient inherited methods.
+        self.client_type = 'MQTTListener'
+
+        # Copy connection environment variables to variables to be used twice.
+        mqtt_listener_username = environment.get('MQTT_LISTENER_USERNAME')
+        mqtt_listener_password = environment.get('MQTT_LISTENER_PASSWORD')
+        mqtt_listener_hostname = environment.get('MQTT_LISTENER_HOSTNAME')
+        mqtt_listener_port = environment.get('MQTT_LISTENER_PORT')
+
         # Perform the initial connection.
-        self._connect(environment.get('MQTT_LISTENER_USERNAME'),
-                      environment.get('MQTT_LISTENER_PASSWORD'),
-                      environment.get('MQTT_LISTENER_HOSTNAME'),
-                      environment.get('MQTT_LISTENER_PORT'))
+        logging.info(f'MQTTListener attempting to connect to {mqtt_listener_hostname}:{mqtt_listener_port} with username {mqtt_listener_username} and password {mqtt_listener_password}')
+        self._connect(mqtt_listener_username,
+                      mqtt_listener_password,
+                      mqtt_listener_hostname,
+                      mqtt_listener_port)
+
+        # Set the subscribe and on_message protocols.
         self.client.on_subscribe = self.on_subscribe
         self.client.on_message = self.on_message
 
