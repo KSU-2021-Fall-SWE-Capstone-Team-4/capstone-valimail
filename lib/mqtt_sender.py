@@ -1,4 +1,5 @@
 import os
+from lib.util import environment
 from lib.mqtt_client import MQTTClient
 
 class MQTTSender(MQTTClient):
@@ -9,15 +10,15 @@ class MQTTSender(MQTTClient):
         All variables needed are pulled from config.py.
         """
         # Perform the initial connection.
-        self._connect(os.environ['MQTT_SENDER_USERNAME'],
-                      os.environ['MQTT_SENDER_PASSWORD'],
-                      os.environ['MQTT_SENDER_HOSTNAME'],
-                      int(os.environ['MQTT_SENDER_PORT']))
+        self._connect(environment.get('MQTT_SENDER_USERNAME'),
+                      environment.get('MQTT_SENDER_PASSWORD'),
+                      environment.get('MQTT_SENDER_HOSTNAME'),
+                      environment.get('MQTT_SENDER_PORT'))
         self.client.on_publish = self.on_publish
 
         # Instantiate the topics list, which will keep track of all the topics this sender sends to.
         self.topics = []
-        for topic in os.environ['MQTT_SENDER_TOPICS'].split(','):
+        for topic in environment.get('MQTT_SENDER_TOPICS'):
             self.topics.append(topic)
 
     def publish(self, payload, qos=0, retain=False, properties=None):

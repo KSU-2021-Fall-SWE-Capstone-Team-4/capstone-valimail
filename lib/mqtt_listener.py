@@ -1,4 +1,4 @@
-import os
+from lib.util import environment
 from lib.mqtt_client import MQTTClient
 from lib.authorization_client import AuthorizationClient
 
@@ -10,15 +10,15 @@ class MQTTListener(MQTTClient):
         All variables needed are pulled from config.py.
         """
         # Perform the initial connection.
-        self._connect(os.environ['MQTT_LISTENER_USERNAME'],
-                      os.environ['MQTT_LISTENER_PASSWORD'],
-                      os.environ['MQTT_LISTENER_HOSTNAME'],
-                      int(os.environ['MQTT_LISTENER_PORT']))
+        self._connect(environment.get('MQTT_LISTENER_USERNAME'),
+                      environment.get('MQTT_LISTENER_PASSWORD'),
+                      environment.get('MQTT_LISTENER_HOSTNAME'),
+                      environment.get('MQTT_LISTENER_PORT'))
         self.client.on_subscribe = self.on_subscribe
         self.client.on_message = self.on_message
 
         # Subscribe to relevant topics.
-        for topic in os.environ['MQTT_LISTENER_TOPICS'].split(','):
+        for topic in environment.get('MQTT_LISTENER_TOPICS'):
             self.subscribe(topic)
 
         # Initialize the AuthorizationClient.

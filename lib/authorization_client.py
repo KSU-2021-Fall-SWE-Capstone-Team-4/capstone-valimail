@@ -1,11 +1,11 @@
 from dane_jwe_jws.authentication import Authentication
 from lib.mqtt_sender import MQTTSender
 from dane_jwe_jws.util import Util
+from lib.util import environment
 import multiprocessing
 import base64
 import json
 import time
-import os
 
 
 class AuthorizationClient:
@@ -54,7 +54,7 @@ class AuthorizationClient:
 
         # Finally, we trim the excess fat off x5u and compare it against the whitelist.
         x5u = Util.get_name_from_dns_uri(x5u)
-        if x5u not in os.environ['DNS_WHITELIST'].split(','):
+        if x5u not in environment.get('DNS_WHITELIST'):
             return False
 
         # Now that we know the message is from a whitelisted source, we verify its integrity using the authorize_with_timeout method.
