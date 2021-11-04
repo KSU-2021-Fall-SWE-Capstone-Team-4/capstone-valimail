@@ -27,13 +27,9 @@ class MQTTClient:
         client.tls_set(tls_version=mqtt.ssl.PROTOCOL_TLS)
         client.username_pw_set(username, password)
 
-        # Attempts the connection. On fail, system exit.
-        try:
-            client.connect(hostname, port)
-        # ValueError means hostname / port could not be resolved.
-        except ValueError:
-            logging.critical(f'{self.client_type if hasattr(self, "client_type") else "MQTTClient"} could not make connection, hostname could not be resolved')
-            exit(-1)
+        # Attempts the connection.
+        # TODO: Ask ash about timeout implementation
+        client.connect(hostname, port)
 
         # Sets the established client to self.client.
         self.client = client
