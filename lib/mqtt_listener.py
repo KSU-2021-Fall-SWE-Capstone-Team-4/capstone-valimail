@@ -77,4 +77,5 @@ class MQTTListener(MQTTClient):
 
         if AuthorizationClient.authorized(msg):
             # Forward the message.
-            AuthorizationClient.sender.publish(message.payload)
+            if not environment.get('DISABLE_SENDER'):
+                AuthorizationClient.sender.publish(message.payload)
