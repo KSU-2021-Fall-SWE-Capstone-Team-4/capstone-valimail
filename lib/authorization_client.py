@@ -89,6 +89,9 @@ class AuthorizationClient:
 
     @staticmethod
     def _authorize(queue, message_payload):
+        # Set the queue value to false (in case of an exception)
         queue.put(False)
+        # Run the verification
         Authentication.verify(message_payload)
+        # Passed, set the queue value to true
         queue.put(True)
