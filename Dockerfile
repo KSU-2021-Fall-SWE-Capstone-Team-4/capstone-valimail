@@ -1,23 +1,13 @@
 FROM python:3.9
-# python:3.8.10
-# version change
 
 LABEL imageAuthor = "brooklyn@apps.com"
 
-COPY . /opt/AuthMiddleware
+WORKDIR /opt/capstone-valimail
 
-RUN apt-get update
-RUN apt-get install python3 python3-pip python3-dev -y
+COPY . .
 
-WORKDIR /opt/AuthMiddleware
-RUN pip install -r requirements.txt
+# wont be saved to temp file
+RUN pip3 install --no-cache-dir -r requirements.txt
 
-EXPOSE 5000
-
-RUN chmod +x /opt/AuthMiddleware/main.py
-#RUN pip install
-
-#ENTRYPOINT ["/opt/mpp-solar/setup.py","root","AuthMiddleware"]
-RUN ls /opt
-CMD ["/opt/AuthMiddleware/main.py","root","AuthMiddleware"]
+CMD ["python", "main.py"]
 
