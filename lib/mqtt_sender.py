@@ -1,6 +1,7 @@
 import os
 from lib.util import environment
 from lib.mqtt_client import MQTTClient
+import logging
 
 class MQTTSender(MQTTClient):
 
@@ -9,11 +10,23 @@ class MQTTSender(MQTTClient):
         Initializes the MQTTListener class.
         All variables needed are pulled from config.py.
         """
+        # Sets the client_type for MQTTClient inherited methods.
+        self.client_type = 'MQTTSender'
+
+        # Copy connection environment variables to variables to be used twice.
+        mqtt_sender_username = environment.get('MQTT_SENDER_USERNAME')
+        mqtt_sender_password = environment.get('MQTT_SENDER_PASSWORD')
+        mqtt_sender_hostname = environment.get('MQTT_SENDER_HOSTNAME')
+        mqtt_sender_port = environment.get('MQTT_SENDER_PORT')
+
         # Perform the initial connection.
-        self._connect(environment.get('MQTT_SENDER_USERNAME'),
-                      environment.get('MQTT_SENDER_PASSWORD'),
-                      environment.get('MQTT_SENDER_HOSTNAME'),
-                      environment.get('MQTT_SENDER_PORT'))
+        logging.info(f'MQTTSender attempting to connect to {mqtt_sender_hostname}:{mqtt_sender_port} with username {mqtt_sender_username} and password {mqtt_sender_password}')
+        self._connect(mqtt_sender_username,
+                      mqtt_sender_password,
+                      mqtt_sender_hostname,
+                      mqtt_sender_port)
+
+        # Set the on_publish protocol.
         self.client.on_publish = self.on_publish
 
         # Instantiate the topics list, which will keep track of all the topics this sender sends to.

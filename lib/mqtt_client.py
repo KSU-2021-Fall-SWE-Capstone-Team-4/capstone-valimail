@@ -21,7 +21,7 @@ class MQTTClient:
         # If the client doesn't already have a client_type attribute, we add one for it and add the connection callback method.
         if not hasattr(client, 'client_type') and hasattr(self, 'client_type'):
             client.client_type = self.client_type
-        client.on_connect = self.on_connect
+        client.on_connect = MQTTClient.on_connect
 
         # Sets the proper protocol, username, password, hostname, and port.
         client.tls_set(tls_version=mqtt.ssl.PROTOCOL_TLS)
