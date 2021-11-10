@@ -50,30 +50,24 @@ class MQTTClient:
         # If the result code is 0, connection was established successfully.
         if result_code == 0:
             logging.info(f'{client.client_type if hasattr(client, "client_type") else "MQTTClient"} connected successfully')
+            return
 
         # Otherwise, connection was unsuccessful.
         # Result code values are reported as documented in paho.mqtt.client's docstring.
-        # Result code 1 (incorrect protocol version):
-        elif result_code == 1:
-            logging.critical(f'{client.client_type if hasattr(client, "client_type") else "MQTTClient"} failed to connect due to mismatching protocol versions')
-            exit(result_code)
+        elif result_code <= 5:
+            fail_reasons = {
+                1: 'failed to connect due to mismatching protocol versions',
+                2: 'failed to connect due to invalid client identifier',
+                3: 'failed to connect, server unavailable',
+                4: 'failed to connect due to bad username / password',
+                5: 'failed to connect, not authorized',
+            }
+            # Report with a log.
+            logging.critical(f'{client.client_type if hasattr(client, "client_type") else "MQTTClient"} {fail_reasons[result_code]}')
 
-        # Result code 2 (invalid client identifier):
-        elif result_code == 2:
-            logging.critical(f'{client.client_type if hasattr(client, "client_type") else "MQTTClient"} failed to connect due to invalid client identifier')
-            exit(result_code)
+        # Other / unknown, log accordingly:
+        else:
+            logging.critical(f'{client.client_type if hasattr(client, "client_type") else "MQTTClient"} could not connect for unknown reason')
 
-        # Result code 3 (server unavailable):
-        elif result_code == 3:
-            logging.critical(f'{client.client_type if hasattr(client, "client_type") else "MQTTClient"} failed to connect, server unavailable')
-            exit(result_code)
-
-        # Result code 4 (bad username / password):
-        elif result_code == 4:
-            logging.critical(f'{client.client_type if hasattr(client, "client_type") else "MQTTClient"} failed to connect due to bad username / password')
-            exit(result_code)
-
-        # Result code 5 (not authorized):
-        elif result_code == 5:
-            logging.critical(f'{client.client_type if hasattr(client, "client_type") else "MQTTClient"} failed to connect, not authorized')
-            exit(result_code)
+        # Exit with the result_code.
+        exit(result_code)
