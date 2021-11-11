@@ -2,6 +2,7 @@ import os
 from lib.util import environment
 from lib.mqtt_client import MQTTClient
 import logging
+import time
 
 class MQTTSender(MQTTClient):
 
@@ -19,12 +20,15 @@ class MQTTSender(MQTTClient):
         mqtt_sender_hostname = environment.get('MQTT_SENDER_HOSTNAME')
         mqtt_sender_port = environment.get('MQTT_SENDER_PORT')
 
-        # Perform the initial connection.
+        # Setup the initial connection.
         logging.info(f'MQTTSender attempting to connect to {mqtt_sender_hostname}:{mqtt_sender_port} with username {mqtt_sender_username} and password {mqtt_sender_password}')
         self._connect(mqtt_sender_username,
                       mqtt_sender_password,
                       mqtt_sender_hostname,
                       mqtt_sender_port)
+
+        # Next, test the connection.
+        self.test_connection()
 
         # Set the on_publish protocol.
         self.client.on_publish = self.on_publish
@@ -33,6 +37,31 @@ class MQTTSender(MQTTClient):
         self.topics = []
         for topic in environment.get('MQTT_SENDER_TOPICS'):
             self.topics.append(topic)
+
+    def test_connection(self):
+        """
+        Tests the connection set up in the self._connect method.
+        Has innate timeout detection.
+
+        Raises:
+            AttributeError : self.client has not been instantiated.
+        """
+        # In order to test the actual connection, a miniature loop is started to check for a valid connection.
+        self.client.loop_start()
+
+        # This for loop acts as a short circuit to prevent from having to wait the full timeout amount.
+        for second in range(max(1, environment.get('MQTT_CLIENT_CONNECTION_TIMEOUT_SECONDS'))):
+            time.sleep(1)
+            if self.client.is_connected():
+                break
+
+        # Finally, check if client is connected for timeout detection.
+        if not self.client.is_connected():
+            logging.critical(f'{client.client_type if hasattr(client, "client_type") else "MQTTClient"} timed out while connecting')
+            exit(-1)
+
+        # Stop the loop.
+        self.client.loop_stop(force=True)
 
     def publish(self, payload, qos=0, retain=False, properties=None):
         """

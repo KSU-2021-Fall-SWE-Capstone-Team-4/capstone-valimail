@@ -28,7 +28,9 @@ class MQTTClient:
         client.username_pw_set(username, password)
 
         # Attempts the connection.
-        # TODO: Ask ash about timeout implementation
+        # The client.connect method sets the variables in place so that the connection can be instantiated, but doesn't launch.
+        # This is due to the fact that no connection is made until the client is put into a loop.
+        # This will be done differently based on what type of MQTTClient is being instantiated, so it's not acted upon here.
         client.connect(hostname, port)
 
         # Sets the established client to self.client.

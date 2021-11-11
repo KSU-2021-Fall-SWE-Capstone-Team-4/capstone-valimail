@@ -22,4 +22,4 @@ if __name__ == '__main__':
 
     # Force listener to loop forever.
     listener.loop_forever()
-
+    listener.loop_forever()
