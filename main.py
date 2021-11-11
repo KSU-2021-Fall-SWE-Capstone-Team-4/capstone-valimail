@@ -26,5 +26,5 @@ if __name__ == '__main__':
     # Instantiate listener.
     listener = MQTTListener()
 
-    # Force listener to loop forever.
-    listener.loop_forever()
+    # Begin the listening loop.
+    listener.begin_listening()

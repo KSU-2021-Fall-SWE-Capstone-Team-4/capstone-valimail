@@ -61,7 +61,7 @@ class MQTTSender(MQTTClient):
 
         # Finally, check if client is connected for timeout detection.
         if not self.client.is_connected():
-            logging.critical(f'{client.client_type if hasattr(client, "client_type") else "MQTTClient"} timed out while connecting')
+            logging.critical('MQTTSender timed out while connecting')
             exit(-1)
 
         # Stop the loop.

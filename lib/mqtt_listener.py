@@ -36,6 +36,24 @@ class MQTTListener(MQTTClient):
         for topic in environment.get('MQTT_LISTENER_TOPICS'):
             self.subscribe(topic)
 
+    def begin_listening(self):
+        """
+        Loops forever (starts the listening loop).
+        Required call for actually listening to stuff.
+        Acts as a wrapper for paho.mqtt.client.Client.loop_forever.
+        This is where the __main__ process ends, since loop_forever should never break UNLESS the timeout was achieved.
+        """
+        # Log the connection's start.
+        logging.info('MQTTListener now connecting...')
+
+        # Start the client loop.
+        self.client.loop_forever(timeout=environment.get('MQTT_CLIENT_CONNECTION_TIMEOUT_SECONDS'))
+
+        # If we EVER make it here, it means that the connection timed out, which is a critical error.
+        # Exit the program accordingly.
+        logging.critical('MQTTListener timed out while connecting')
+        exit(-1)
+
     def subscribe(self, topic, qos=0, options=None, properties=None):
         """
         Subscribes to a topic.
@@ -50,18 +68,6 @@ class MQTTListener(MQTTClient):
         logging.info(f'MQTTListener subscribing to topic {topic} with QOS {qos}')
         self.client.subscribe(topic, qos, options, properties)
 
-    def loop_forever(self, retry_first_connection=True):
-        """
-        Loops forever (starts the listening loop).
-        Required call for actually listening to stuff.
-        Acts as a wrapper for paho.mqtt.client.Client.loop_forever.
-
-        Arguments:
-            retry_first_connection (bool): Whether or not to retry the first connection. Defaults to True.
-        """
-        # TODO: implement connection testing here, a la what is in MQTTSender.
-        self.client.loop_forever(retry_first_connection)
-
     @staticmethod
     def on_subscribe(client, user_data, mid, granted_qos):
         """
@@ -74,7 +80,7 @@ class MQTTListener(MQTTClient):
             mid : Currently unknown.
             granted_qos (bool) : Whether or not the desired quality of service level has been granted.
         """
-        logging.debug(f'Subscribed to mid {mid} with QOS {granted_qos}')
+        logging.debug(f'Subscribed to mid {mid} with desired QOS {granted_qos}')
 
     @staticmethod
     def on_message(client, user_data, msg):
