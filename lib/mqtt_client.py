@@ -5,8 +5,8 @@ class MQTTClient:
 
     def _connect(self, username, password, hostname, port):
         """
-        Connects the MQTT Client to a MQTT Server.
-        Acts somewhat as a wrapper for paho.mqtt.client.Client.subscribe.
+        Sets up the connection of the MQTT Client to a MQTT Server.
+        Acts somewhat as a wrapper for paho.mqtt.client.Client.connect (which does not actually test the connection, but rather sets it up to be used).
         After calling this method, self.client will have its attribute set to a paho.mqtt.client.Client instance.
 
         Arguments:
@@ -52,6 +52,7 @@ class MQTTClient:
         # If the result code is 0, connection was established successfully.
         if result_code == 0:
             logging.info(f'{client.client_type if hasattr(client, "client_type") else "MQTTClient"} connected successfully')
+            logging.debug(f'{client.client_type if hasattr(client, "client_type") else "MQTTClient"} connection has flags {flags}')
             return
 
         # Otherwise, connection was unsuccessful.
@@ -66,10 +67,12 @@ class MQTTClient:
             }
             # Report with a log.
             logging.critical(f'{client.client_type if hasattr(client, "client_type") else "MQTTClient"} {fail_reasons[result_code]}')
+            logging.debug(f'{client.client_type if hasattr(client, "client_type") else "MQTTClient"} connection has flags {flags}')
 
         # Other / unknown, log accordingly:
         else:
             logging.critical(f'{client.client_type if hasattr(client, "client_type") else "MQTTClient"} could not connect for unknown reason')
+            logging.debug(f'{client.client_type if hasattr(client, "client_type") else "MQTTClient"} connection has flags {flags}')
 
         # Exit with the result_code.
         exit(result_code)

@@ -9,6 +9,8 @@ class MQTTListener(MQTTClient):
         """
         Initializes the MQTTListener class.
         All variables needed are pulled from .env.
+        Sets up the necessary connection, but does not test.
+        Subscribes to the necessary topics.
         """
         # Sets the client_type for MQTTClient inherited methods.
         self.client_type = 'MQTTListener'
@@ -20,7 +22,7 @@ class MQTTListener(MQTTClient):
         mqtt_listener_port = environment.get('MQTT_LISTENER_PORT')
 
         # Use the inherited _connect method to setup the connection.
-        logging.info(f'MQTTListener attempting to connect to {mqtt_listener_hostname}:{mqtt_listener_port} with username {mqtt_listener_username} and password {mqtt_listener_password}')
+        logging.info(f'MQTTListener setting connection to {mqtt_listener_hostname}:{mqtt_listener_port} with username {mqtt_listener_username} and password {mqtt_listener_password}')
         self._connect(mqtt_listener_username,
                       mqtt_listener_password,
                       mqtt_listener_hostname,
@@ -34,9 +36,6 @@ class MQTTListener(MQTTClient):
         for topic in environment.get('MQTT_LISTENER_TOPICS'):
             self.subscribe(topic)
 
-        # Initialize the AuthorizationClient.
-        AuthorizationClient.initialize()
-
     def subscribe(self, topic, qos=0, options=None, properties=None):
         """
         Subscribes to a topic.
@@ -48,6 +47,7 @@ class MQTTListener(MQTTClient):
             options : Currently unknown.
             properties : Currently unknown.
         """
+        logging.info(f'MQTTListener subscribing to topic {topic} with QOS {qos}')
         self.client.subscribe(topic, qos, options, properties)
 
     def loop_forever(self, retry_first_connection=True):
@@ -73,7 +73,7 @@ class MQTTListener(MQTTClient):
             mid : Currently unknown.
             granted_qos (bool) : Whether or not the desired quality of service level has been granted.
         """
-        print("Subscribed: " + str(mid) + " " + str(granted_qos))
+        logging.debug(f'Subscribed to mid {mid} with QOS {granted_qos}')
 
     @staticmethod
     def on_message(client, user_data, msg):

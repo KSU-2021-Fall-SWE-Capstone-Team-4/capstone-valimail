@@ -14,11 +14,14 @@ if __name__ == '__main__':
         logger.enable_debug_mode()
 
     # Import the MQTTListener.
-    # MQTTListener will import AuthorizationClient, which will create its own MQTTSender.
     from lib.mqtt_listener import MQTTListener
-
     # Instantiate listener.
     listener = MQTTListener()
+
+    # Import the AuthorizationClient.
+    from lib.authorization_client import AuthorizationClient
+    # Initialize the AuthorizationClient (which will, in turn, instantiate the MQTTSender).
+    AuthorizationClient.initialize()
 
     # Force listener to loop forever.
     listener.loop_forever()

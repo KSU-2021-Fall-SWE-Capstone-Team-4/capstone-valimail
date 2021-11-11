@@ -8,8 +8,9 @@ class MQTTSender(MQTTClient):
 
     def __init__(self):
         """
-        Initializes the MQTTListener class.
-        All variables needed are pulled from config.py.
+        Initializes the MQTTSender class.
+        All variables needed are pulled from .env.
+        Sets up and tests the necessary connection, then sets the topics.
         """
         # Sets the client_type for MQTTClient inherited methods.
         self.client_type = 'MQTTSender'
@@ -21,13 +22,14 @@ class MQTTSender(MQTTClient):
         mqtt_sender_port = environment.get('MQTT_SENDER_PORT')
 
         # Use the inherited _connect method to setup the connection.
-        logging.info(f'MQTTSender attempting to connect to {mqtt_sender_hostname}:{mqtt_sender_port} with username {mqtt_sender_username} and password {mqtt_sender_password}')
+        logging.info(f'MQTTSender setting connection to {mqtt_sender_hostname}:{mqtt_sender_port} with username {mqtt_sender_username} and password {mqtt_sender_password}')
         self._connect(mqtt_sender_username,
                       mqtt_sender_password,
                       mqtt_sender_hostname,
                       mqtt_sender_port)
 
         # Next, test the connection.
+        logging.info('MQTTSender now testing connection...')
         self.test_connection()
 
         # Set the on_publish protocol.
@@ -53,6 +55,7 @@ class MQTTSender(MQTTClient):
         for second in range(max(1, environment.get('MQTT_CLIENT_CONNECTION_TIMEOUT_SECONDS'))):
             time.sleep(1)
             if self.client.is_connected():
+                logging.debug(f'MQTTSender connected after {second} seconds')
                 break
 
         # Finally, check if client is connected for timeout detection.
