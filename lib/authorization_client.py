@@ -77,7 +77,7 @@ class AuthorizationClient:
         process.start()
 
         # Wait for the process to join with a timeout variable (changed in .env).
-        process.join(9)
+        process.join(environment.get('DNS_TIMEOUT_SECONDS'))
 
         # Check if the process is still alive (timed out). If so, kill it and return False.
         if process.is_alive():
