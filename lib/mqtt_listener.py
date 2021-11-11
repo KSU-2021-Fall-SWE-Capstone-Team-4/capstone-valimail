@@ -19,7 +19,7 @@ class MQTTListener(MQTTClient):
         mqtt_listener_hostname = environment.get('MQTT_LISTENER_HOSTNAME')
         mqtt_listener_port = environment.get('MQTT_LISTENER_PORT')
 
-        # Perform the initial connection.
+        # Use the inherited _connect method to setup the connection.
         logging.info(f'MQTTListener attempting to connect to {mqtt_listener_hostname}:{mqtt_listener_port} with username {mqtt_listener_username} and password {mqtt_listener_password}')
         self._connect(mqtt_listener_username,
                       mqtt_listener_password,

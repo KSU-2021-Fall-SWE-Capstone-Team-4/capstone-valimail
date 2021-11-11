@@ -20,7 +20,7 @@ class MQTTSender(MQTTClient):
         mqtt_sender_hostname = environment.get('MQTT_SENDER_HOSTNAME')
         mqtt_sender_port = environment.get('MQTT_SENDER_PORT')
 
-        # Setup the initial connection.
+        # Use the inherited _connect method to setup the connection.
         logging.info(f'MQTTSender attempting to connect to {mqtt_sender_hostname}:{mqtt_sender_port} with username {mqtt_sender_username} and password {mqtt_sender_password}')
         self._connect(mqtt_sender_username,
                       mqtt_sender_password,
