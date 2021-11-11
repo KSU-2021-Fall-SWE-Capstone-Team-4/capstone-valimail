@@ -59,6 +59,7 @@ class MQTTListener(MQTTClient):
         Arguments:
             retry_first_connection (bool): Whether or not to retry the first connection. Defaults to True.
         """
+        # TODO: implement connection testing here, a la what is in MQTTSender.
         self.client.loop_forever(retry_first_connection)
 
     @staticmethod

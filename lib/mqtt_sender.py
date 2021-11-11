@@ -39,6 +39,7 @@ class MQTTSender(MQTTClient):
         self.topics = []
         for topic in environment.get('MQTT_SENDER_TOPICS'):
             self.topics.append(topic)
+            logging.info(f'MQTTSender will publish to topic "{topic}"')
 
     def test_connection(self):
         """
