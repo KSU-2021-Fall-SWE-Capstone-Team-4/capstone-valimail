@@ -1,0 +1,30 @@
+version: '3.7'
+
+services:
+  hivemq:
+    image: hivemq/hivemq4
+    ports:
+      - 8080:8080
+      - 1883:1883
+    # environment:
+      # - HIVEMQ_CONTROL_CENTER_USER=TestUsername
+      # Generated using: echo -n Password2 | shasum -a 256
+      # - HIVEMQ_CONTROL_CENTER_PASSWORD=1be0222750aaf3889ab95b5d593ba12e4ff1046474702d6b4779f4b527305b23z
+      # https://www.hivemq.com/docs/hivemq/4.7/user-guide/docker.html
+    restart: always
+  
+  auth-middleware:
+    image: auth-middleware
+    build: ./
+    #will restart if there is a disruption in the connection
+    links:
+      - "hivemq"
+    restart: always
+    depends_on:
+      - hivemq
+
+
+# http://localhost:8080
+#username: admin
+#password: hivemq
+
