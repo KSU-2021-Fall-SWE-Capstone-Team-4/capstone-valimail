@@ -26,5 +26,10 @@ if __name__ == '__main__':
     # Instantiate listener.
     listener = MQTTListener()
 
+    # Instantiate the watchdog, passing along the AuthorizationClient and MQTTListener.
+    from lib.watchdog import Watchdog
+    watchdog = Watchdog()
+    watchdog.start()
+
     # Begin the listening loop.
     listener.begin_listening()
