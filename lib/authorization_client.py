@@ -2,18 +2,45 @@ from dane_jwe_jws.authentication import Authentication
 from lib.mqtt_sender import MQTTSender
 from dane_jwe_jws.util import Util
 from lib.util import environment
+from threading import Thread
 import multiprocessing
+import logging
 import base64
 import json
 import time
 
 
-class AuthorizationClient:
+class AuthorizationClient(Thread):
+
+    def __init__(self, message=None):
+        """
+        Initializer for AuthorizationClient thread.
+        Used locally in the static handle_message method.
+
+        Arguments:
+            message (paho.mqtt.client.MQTTMessage) : The message object.
+        """
+        self.message = message
+        Thread.__init__(self)
+
+    def run(self):
+        """
+        The run method is, of course, run when a new thread is started.
+        """
+        # Log the message.
+        logging.debug(f'Message recieved on {self.message.topic}: {self.message.payload}')
+
+        # Run the static authorization method.
+        if AuthorizationClient.authorized(self.message):
+            # Forward the message.
+            if not environment.get('DISABLE_SENDER'):
+                AuthorizationClient.sender.publish(self.message.payload)
 
     @staticmethod
     def initialize():
         """
-        Initializes the AuthorizationClient.
+        Initializes the AuthorizationClient's static methods.
+        Individual AuthorizationClient threads are not started here.
         """
         # Make sure this hasn't been run twice.
         if hasattr(AuthorizationClient, 'initialized') and AuthorizationClient.initialized:
@@ -21,6 +48,19 @@ class AuthorizationClient:
 
         # Create the MQTTSender.
         AuthorizationClient.sender = MQTTSender()
+
+    @staticmethod
+    def handle_message(message):
+        """
+        Handles a message receieved from the MQTTListener.
+        Starts a new thread that handles the authentication, error handling, and forwarding.
+
+        Arguments:
+            message (paho.mqtt.client.MQTTMessage) : The message object.
+        """
+        # Starts the client.
+        client = AuthorizationClient(message)
+        client.start()
 
     @staticmethod
     def authorized(message):
