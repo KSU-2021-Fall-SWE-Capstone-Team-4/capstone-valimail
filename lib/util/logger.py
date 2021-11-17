@@ -2,6 +2,7 @@ import logging
 
 # Logging format is kept here.
 LOGGING_FORMAT = '[%(asctime)s] %(levelname)s: %(message)s'
+SETUP_OVER = True
 
 
 def basic_setup():
@@ -30,9 +31,13 @@ def log_setup_start_header():
     A simple method that logs a line defining where setup begins.
     """
     logging.info('==========================================================SETUP BEGIN==========================================================')
+    global SETUP_OVER
+    SETUP_OVER = False
 
 def log_setup_end_header():
     """
     A simple method that logs a line defining where setup ends.
     """
     logging.info('===========================================================SETUP END===========================================================')
+    global SETUP_OVER
+    SETUP_OVER = True

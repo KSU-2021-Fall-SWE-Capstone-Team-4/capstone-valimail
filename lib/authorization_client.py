@@ -1,7 +1,7 @@
 from dane_jwe_jws.authentication import Authentication
+from lib.util import environment, logger
 from lib.mqtt_sender import MQTTSender
 from dane_jwe_jws.util import Util
-from lib.util import environment
 from threading import Thread
 import multiprocessing
 import logging
@@ -26,12 +26,21 @@ class AuthorizationClient(Thread):
     def run(self):
         """
         The run method is, of course, run when a new thread is started.
+        It logs the message on the debug channel, authorizes, then logs it on the info level.
         """
+        # If logger not yet in post-setup mode, put it in post-setup mode.
+        if not logger.SETUP_OVER:
+            logger.log_setup_end_header()
+
         # Log the message.
         logging.debug(f'Message recieved on {self.message.topic}: {self.message.payload}')
 
         # Run the static authorization method.
         if AuthorizationClient.authorized(self.message):
+
+            # Authorized, log message
+            logging.info(f'Authorized message recieved on {self.message.topic}: {self.message.payload}')
+
             # Forward the message.
             if not environment.get('DISABLE_SENDER'):
                 AuthorizationClient.sender.publish(self.message.payload)
