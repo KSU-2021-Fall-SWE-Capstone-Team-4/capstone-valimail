@@ -15,9 +15,14 @@ def basic_setup():
 def enable_debug_mode():
     """
     A method to be called when debug mode is enabled.
-    Simply changes the logging's level and puts out a debug log.
+    Simply changes the logging's level + format and puts out a debug log.
     """
+    # Set the logging level.
     logging.getLogger().setLevel(logging.DEBUG)
+    # Set the logging format to include thread id.
+    for handler in logging.getLogger().handlers:
+        handler.setFormatter(logging.Formatter('[%(asctime)s] %(levelname)s (Thread %(thread)d): %(message)s'))
+    # Log that debug mode is enabled.
     logging.debug('Debug mode enabled.')
 
 def log_setup_start_header():
