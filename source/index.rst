@@ -10,7 +10,8 @@ Welcome to Wolfmail's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   modules
+   lib_authorization_client
+   lib_mqtt_client
 
 Indices and tables
 ==================

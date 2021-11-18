@@ -3,5 +3,5 @@ Libraries
 
 .. toctree::
 
-    .. autoclass:: lib.authorization_client.AuthorizationClient
+.. autoclass:: lib.authorization_client.AuthorizationClient
    :members:
