@@ -185,6 +185,7 @@ class TestEnvironment(TestCase):
         with self.assertRaises(UndefinedVariableError):
             environment.get('FAKE_MOCK')
 
+
 # Running part.
 if __name__ == '__main__':
     unittest.main()
