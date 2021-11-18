@@ -85,11 +85,6 @@ class AuthorizationClient(threading.Thread):
         Arguments:
             message (MQTTMessage) : The message received from the MQTTListener.
 
-        Raises:
-            json.decoder.JSONDecodeError : The message received is not in a valid JSON format.
-            binascii.Error : One or more fields has a non-base64 character in it.
-            dane_discovery.exceptions.TLSAError : No TLSA records for supplied dns name.
-
         Returns:
             bool : Whether or not the message is authorized to proceed.
         """
@@ -132,10 +127,10 @@ class AuthorizationClient(threading.Thread):
         try:
             x5u = Util.get_name_from_dns_uri(x5u)
         except ValueError:
-            logging.debug('Message\'s DNS URI is formatted incorrectly')
+            logging.debug('Message\'s DNS URI is formatted incorrectly, auth cancelled')
             return False
         if x5u not in environment.get('DNS_WHITELIST'):
-            logging.debug('Message\'s DNS name is not included in the whitelist')
+            logging.debug('Message\'s DNS name is not included in the whitelist, auth cancelled')
             return False
 
         # Now that we know the message is from a whitelisted source, we verify its integrity using the authorize_with_timeout method.
@@ -148,6 +143,10 @@ class AuthorizationClient(threading.Thread):
     def verify_authentication_with_timeout(message_payload, dns_name):
         """
         Authorizes a message with timeout, implemented using the multiprocessing module.
+
+        Arguments:
+            message_payload (dict) : The message payload. Used to get the DNS name and verify.
+            dns_name (str) : The DNS name. Used for logging purposes.
         """
         # First, get the context and a queue; this will allow us to return a boolean value from the _authorize method.
         context = multiprocessing.get_context('spawn')
@@ -171,6 +170,14 @@ class AuthorizationClient(threading.Thread):
 
     @staticmethod
     def _authorize(queue, message_payload, parent_thread_id):
+        """
+        Protected authorize method used in a second process to implement timeout.
+
+        Arguments:
+            queue (context.Queue) : The context queue. Used to return boolean values.
+            message_payload (dict) : The message payload. Used to get the DNS name and verify.
+            parent_thread_id (int) : The id of the parent thread. Used for logging purposes.
+        """
         # Set the queue value to false (in case of an exception)
         queue.put(False)
 

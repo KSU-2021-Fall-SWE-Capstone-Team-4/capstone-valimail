@@ -49,6 +49,7 @@ def log_setup_end_header():
 def log_outside_main_process(level, message, parent_thread_id=None):
     """
     This method is specifically for when logging needs to be done, but outside the main process.
+    It has special functionality to mimic the standard debug logging.
     """
     # Setup the logger.
     # Logging setup varies depending on the debug flag.
