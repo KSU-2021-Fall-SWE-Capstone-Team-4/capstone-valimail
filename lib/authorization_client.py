@@ -1,16 +1,18 @@
 from dane_jwe_jws.authentication import Authentication
+from dane_discovery.exceptions import TLSAError
+from binascii import Error as ASCIIError
 from lib.util import environment, logger
 from lib.mqtt_sender import MQTTSender
 from dane_jwe_jws.util import Util
-from threading import Thread
 import multiprocessing
+import threading
 import logging
 import base64
 import json
 import time
 
 
-class AuthorizationClient(Thread):
+class AuthorizationClient(threading.Thread):
 
     def __init__(self, message=None):
         """
@@ -21,7 +23,7 @@ class AuthorizationClient(Thread):
             message (paho.mqtt.client.MQTTMessage) : The message object.
         """
         self.message = message
-        Thread.__init__(self)
+        threading.Thread.__init__(self)
 
     def run(self):
         """
@@ -39,6 +41,7 @@ class AuthorizationClient(Thread):
         if AuthorizationClient.authorized(self.message):
 
             # Authorized, log message
+            logging.debug('Message authorized, forwarding to sender')
             logging.info(f'Authorized message recieved on {self.message.topic}: {self.message.payload}')
 
             # Forward the message.
@@ -90,30 +93,59 @@ class AuthorizationClient(Thread):
         Returns:
             bool : Whether or not the message is authorized to proceed.
         """
-        # First, convert the message into a json file and grab its 'protected' attribute.
-        message_payload_json = json.loads(message.payload)
-        protected = message_payload_json['protected']
+        # First, convert the message into a json file.
+        try:
+            message_payload_json = json.loads(message.payload)
+        except json.JSONDecodeError:
+            logging.debug('Message not formatted as JSON dict, auth cancelled')
+            return False
+
+        # Grab the protected attribute.
+        try:
+            protected = message_payload_json['protected']
+        except KeyError:
+            logging.debug('Message missing "protected" attribute, auth cancelled')
+            return False
 
         # Next, convert the protected attribute out of base64.
-        protected = base64.b64decode(protected)
+        try:
+            protected = base64.b64decode(protected)
+        except ASCIIError:
+            logging.debug('"protected" attribute does not convert out of base64, auth cancelled')
+            return False
 
-        # Then, we make the protected attribute into a dict as well and grab its 'x5u' attribute.
-        protected_json = json.loads(protected)
-        x5u = protected_json['x5u']
+        # Then, we make the protected attribute into a dict as well.
+        try:
+            protected_json = json.loads(protected)
+        except JSONDecodeError:
+            logging.debug('"protected" attribute is not formatted as JSON dict, auth cancelled')
+            return False
+
+        # Grab the x5u attribute.
+        try:
+            x5u = protected_json['x5u']
+        except KeyError:
+            logging.debug('Message\'s "protected" attribute missing "x5u" attribute, auth cancelled')
+            return False
 
         # Finally, we trim the excess fat off x5u and compare it against the whitelist.
-        x5u = Util.get_name_from_dns_uri(x5u)
+        try:
+            x5u = Util.get_name_from_dns_uri(x5u)
+        except ValueError:
+            logging.debug('Message\'s DNS URI is formatted incorrectly')
+            return False
         if x5u not in environment.get('DNS_WHITELIST'):
+            logging.debug('Message\'s DNS name is not included in the whitelist')
             return False
 
         # Now that we know the message is from a whitelisted source, we verify its integrity using the authorize_with_timeout method.
-        passed_authentication = AuthorizationClient.verify_authentication_with_timeout(message.payload)
+        passed_authentication = AuthorizationClient.verify_authentication_with_timeout(message.payload, x5u)
 
         # If no exception has been raised / we have not returned yet, then message passed all the checks.
         return passed_authentication
 
     @staticmethod
-    def verify_authentication_with_timeout(message_payload):
+    def verify_authentication_with_timeout(message_payload, dns_name):
         """
         Authorizes a message with timeout, implemented using the multiprocessing module.
         """
@@ -122,7 +154,7 @@ class AuthorizationClient(Thread):
         queue = context.Queue()
 
         # Instantiate the process, with the target at _authorize and the queue and message_payload as arguments.
-        process = context.Process(target=AuthorizationClient._authorize, args=(queue, message_payload))
+        process = context.Process(target=AuthorizationClient._authorize, args=(queue, message_payload, threading.get_ident()))
         process.start()
 
         # Wait for the process to join with a timeout variable (changed in .env).
@@ -131,16 +163,25 @@ class AuthorizationClient(Thread):
         # Check if the process is still alive (timed out). If so, kill it and return False.
         if process.is_alive():
             process.terminate()
+            logging.debug(f'Timed out when accessing TSLA records at {dns_name}')
             return False
 
         # Process concluded normally, gather the output from the queue.
         return queue.get()
 
     @staticmethod
-    def _authorize(queue, message_payload):
+    def _authorize(queue, message_payload, parent_thread_id):
         # Set the queue value to false (in case of an exception)
         queue.put(False)
+
         # Run the verification
-        Authentication.verify(message_payload)
+        try:
+            Authentication.verify(message_payload)
+
+        # Failed, log the error.
+        except TLSAError as e:
+            logger.log_outside_main_process(logging.DEBUG, repr(e), parent_thread_id)
+            return
+
         # Passed, set the queue value to true
         queue.put(True)
