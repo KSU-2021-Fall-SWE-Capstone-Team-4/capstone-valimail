@@ -68,6 +68,50 @@
 <h1>Libraries<a class="headerlink" href="#libraries" title="Permalink to this headline"></a></h1>
 <div class="toctree-wrapper compound">
 </div>
+<dl class="py class">
+<dt class="sig sig-object py" id="lib.authorization_client.AuthorizationClient">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">lib.authorization_client.</span></span><span class="sig-name descname"><span class="pre">AuthorizationClient</span></span><a class="headerlink" href="#lib.authorization_client.AuthorizationClient" title="Permalink to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="lib.authorization_client.AuthorizationClient.authorized">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">authorized</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.authorization_client.AuthorizationClient.authorized" title="Permalink to this definition"></a></dt>
+<dd><p>Determines whether or not a message is authorized.
+First checks if the dns name is on the whitelist defined in .env.
+Then checks whether the message itself has a valid TLSA record with the supplied dns name.
+If it passes all the checks, then True is returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>message</strong> (<em>MQTTMessage</em>) – The message received from the MQTTListener.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>json.decoder.JSONDecodeError</strong> – The message received is not in a valid JSON format.</p></li>
+<li><p><strong>binascii.Error</strong> – One or more fields has a non-base64 character in it.</p></li>
+<li><p><strong>dane_discovery.exceptions.TLSAError</strong> – No TLSA records for supplied dns name.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Whether or not the message is authorized to proceed.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lib.authorization_client.AuthorizationClient.initialize">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lib.authorization_client.AuthorizationClient.initialize" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes the AuthorizationClient.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lib.authorization_client.AuthorizationClient.verify_authentication_with_timeout">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">verify_authentication_with_timeout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_payload</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.authorization_client.AuthorizationClient.verify_authentication_with_timeout" title="Permalink to this definition"></a></dt>
+<dd><p>Authorizes a message with timeout, implemented using the multiprocessing module.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
