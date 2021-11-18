@@ -100,10 +100,11 @@ class MQTTSender(MQTTClient):
         """
         Callback method for receiving a message through self.client.
         Used as a static method here so that self.client can use it.
+        Currently unused.
 
         Arguments:
             client (paho.mqtt.client.Client) : The client calling this method.
             user_data : The user data for the established connection.
             mid : Currently unknown.
         """
-        print("mid: " + str(mid))
+        pass

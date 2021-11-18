@@ -93,9 +93,4 @@ class MQTTListener(MQTTClient):
             user_data : The user data for the established connection.
             msg (paho.mqtt.client.MQTTMessage) : The message object.
         """
-        print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
-
-        if AuthorizationClient.authorized(msg):
-            # Forward the message.
-            if not environment.get('DISABLE_SENDER'):
-                AuthorizationClient.sender.publish(message.payload)
+        AuthorizationClient.handle_message(message=msg)
