@@ -38,7 +38,7 @@ class AuthorizationClient(threading.Thread):
         logging.debug(f'Message recieved on {self.message.topic}: {self.message.payload}')
 
         # Run the static authorization method.
-        if AuthorizationClient.authorized(self.message):
+        if AuthorizationClient.authorized(self.message)[0]:
 
             # Authorized, log message
             logging.debug('Message authorized, forwarding to sender')
@@ -86,58 +86,59 @@ class AuthorizationClient(threading.Thread):
             message (MQTTMessage) : The message received from the MQTTListener.
 
         Returns:
-            bool : Whether or not the message is authorized to proceed.
+            bool, Exception : Whether or not the message is authorized to proceed, combined with the reason it failed, if any.
+                              Reason failed is used pretty much exclusively for testing purposes.
         """
         # First, convert the message into a json file.
         try:
             message_payload_json = json.loads(message.payload)
-        except json.JSONDecodeError:
+        except json.JSONDecodeError as e:
             logging.debug('Message not formatted as JSON dict, auth cancelled')
-            return False
+            return False, e
 
         # Grab the protected attribute.
         try:
             protected = message_payload_json['protected']
-        except KeyError:
+        except KeyError as e:
             logging.debug('Message missing "protected" attribute, auth cancelled')
-            return False
+            return False, e
 
         # Next, convert the protected attribute out of base64.
         try:
             protected = base64.b64decode(protected)
-        except ASCIIError:
+        except ASCIIError as e:
             logging.debug('"protected" attribute does not convert out of base64, auth cancelled')
-            return False
+            return False, e
 
         # Then, we make the protected attribute into a dict as well.
         try:
             protected_json = json.loads(protected)
-        except JSONDecodeError:
+        except json.JSONDecodeError as e:
             logging.debug('"protected" attribute is not formatted as JSON dict, auth cancelled')
-            return False
+            return False, e
 
         # Grab the x5u attribute.
         try:
             x5u = protected_json['x5u']
-        except KeyError:
+        except KeyError as e:
             logging.debug('Message\'s "protected" attribute missing "x5u" attribute, auth cancelled')
-            return False
+            return False, e
 
         # Finally, we trim the excess fat off x5u and compare it against the whitelist.
         try:
             x5u = Util.get_name_from_dns_uri(x5u)
-        except ValueError:
+        except ValueError as e:
             logging.debug('Message\'s DNS URI is formatted incorrectly, auth cancelled')
-            return False
+            return False, e
         if x5u not in environment.get('DNS_WHITELIST'):
             logging.debug('Message\'s DNS name is not included in the whitelist, auth cancelled')
-            return False
+            return False, None
 
         # Now that we know the message is from a whitelisted source, we verify its integrity using the authorize_with_timeout method.
         passed_authentication = AuthorizationClient.verify_authentication_with_timeout(message.payload, x5u)
 
         # If no exception has been raised / we have not returned yet, then message passed all the checks.
-        return passed_authentication
+        return passed_authentication, None
 
     @staticmethod
     def verify_authentication_with_timeout(message_payload, dns_name):
