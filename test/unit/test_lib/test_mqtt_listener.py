@@ -44,11 +44,9 @@ class TestMQTTListener(TestCase):
         m_i.return_value = None
         listener = MQTTListener()
 
-        # Create subscribe mock
-        subscribe_mock = MagicMock()
-
         # Create mock paho client with subscribe mock and attach to listener
         paho_client_mock = MagicMock()
+        subscribe_mock = MagicMock()
         paho_client_mock.subscribe = subscribe_mock
         listener.client = paho_client_mock
 
