@@ -179,7 +179,7 @@ class AuthorizationClient(threading.Thread):
             message_payload (dict) : The message payload. Used to get the DNS name and verify.
             parent_thread_id (int) : The id of the parent thread. Used for logging purposes.
         """
-        # Set the queue value to false (in case of an exception)
+        # Set the queue value to false (in case of an unexpected exception)
         queue.put(False)
 
         # Run the verification
