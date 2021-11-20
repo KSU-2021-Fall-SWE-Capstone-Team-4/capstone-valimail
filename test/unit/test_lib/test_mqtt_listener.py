@@ -38,6 +38,30 @@ class TestMQTTListener(TestCase):
 
 
     @mock.patch("lib.mqtt_listener.MQTTListener.__init__")
+    @mock.patch("lib.util.environment.get")
+    def test_begin_listening(self, m_eg, m_i):
+        """lib.mqtt_listener.MQTTListener.subscribe"""
+        # Create thing
+        m_i.return_value = None
+        listener = MQTTListener()
+
+        # Create mock paho client with loop_forever mock and attach to listener
+        loop_forever_mock = MagicMock()
+        paho_client_mock = MagicMock(loop_forever=loop_forever_mock)
+        listener.client = paho_client_mock
+
+        # Set return_value for environment.get
+        m_eg.return_value = 'im so tired. its 4 am on saturday'
+
+        # Run method
+        with self.assertRaises(SystemExit):
+            listener.begin_listening()
+
+        # Run assertions
+        loop_forever_mock.assert_called_with(timeout='im so tired. its 4 am on saturday')
+
+
+    @mock.patch("lib.mqtt_listener.MQTTListener.__init__")
     def test_subscribe(self, m_i):
         """lib.mqtt_listener.MQTTListener.subscribe"""
         # Create thing
