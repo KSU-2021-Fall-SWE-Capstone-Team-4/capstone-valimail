@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 from lib.mqtt_client import MQTTClient
 from lib import mqtt_client
 
-class TestMQTTSender(TestCase):
+class TestMQTTClient(TestCase):
 
 
     @mock.patch("paho.mqtt.client")
