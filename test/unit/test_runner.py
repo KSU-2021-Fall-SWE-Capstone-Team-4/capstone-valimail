@@ -3,6 +3,7 @@ from unittest import TestLoader, TextTestRunner
 def initialize_testing_suite():
     """
     Initializes (and runs) the testing suite.
+    Runs every test in the test/unit directory at the same time.
     """
     # Get the test loader
     test_loader = TestLoader()
