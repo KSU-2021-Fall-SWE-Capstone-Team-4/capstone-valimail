@@ -29,13 +29,17 @@ class TestMQTTClient(TestCase):
         self.assertEqual(client.client, client_mock)
 
 
-    def test_on_connect_resultcode_zero(self):
+    @mock.patch("logging.debug")
+    @mock.patch("logging.critical")
+    def test_on_connect_resultcode_zero(self, m_c, m_d):
         """lib.mqtt_client.MQTTClient.on_connect.resultcode_zero"""
         # Just run to make sure that there's no error.
         MQTTClient.on_connect(MagicMock(), {}, {}, 0)
 
 
-    def test_on_connect_resultcode_nonzero(self):
+    @mock.patch("logging.debug")
+    @mock.patch("logging.critical")
+    def test_on_connect_resultcode_nonzero(self, m_c, m_d):
         """lib.mqtt_client.MQTTClient.on_connect.resultcode_zero"""
         # Run in a for loop to test a lot of values that are decidedly not 0, and see if it causes an exit.
         for i in range(1, 100):
