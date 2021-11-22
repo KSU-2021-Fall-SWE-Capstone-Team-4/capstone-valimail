@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MQTT Listener &mdash; Wolfmail 1.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="MQTT Sender" href="lib_mqtt_sender.html" />
+    <link rel="prev" title="MQTT Client" href="lib_mqtt_client.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Wolfmail
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="lib_authorization_client.html">Authorization Client</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lib_mqtt_client.html">MQTT Client</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">MQTT Listener</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="lib_mqtt_sender.html">MQTT Sender</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lib_watchdog.html">Watchdog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Wolfmail</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>MQTT Listener</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/lib_mqtt_listener.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="mqtt-listener">
+<h1>MQTT Listener<a class="headerlink" href="#mqtt-listener" title="Permalink to this headline"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="lib.mqtt_listener.MQTTListener">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">lib.mqtt_listener.</span></span><span class="sig-name descname"><span class="pre">MQTTListener</span></span><a class="headerlink" href="#lib.mqtt_listener.MQTTListener" title="Permalink to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="lib.mqtt_listener.MQTTListener.begin_listening">
+<span class="sig-name descname"><span class="pre">begin_listening</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lib.mqtt_listener.MQTTListener.begin_listening" title="Permalink to this definition"></a></dt>
+<dd><p>Loops forever (starts the listening loop).
+Required call for actually listening to stuff.
+Acts as a wrapper for paho.mqtt.client.Client.loop_forever.
+This is where the __main__ process ends, since loop_forever should never break UNLESS the timeout was achieved.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lib.mqtt_listener.MQTTListener.on_message">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">on_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.mqtt_listener.MQTTListener.on_message" title="Permalink to this definition"></a></dt>
+<dd><p>Callback method for receiving a message through self.client.
+Used as a static method here so that self.client can use it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>client</strong> (<em>paho.mqtt.client.Client</em>) – The client calling this method.</p></li>
+<li><p><strong>user_data</strong> – The user data for the established connection.</p></li>
+<li><p><strong>msg</strong> (<em>paho.mqtt.client.MQTTMessage</em>) – The message object.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lib.mqtt_listener.MQTTListener.on_subscribe">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">on_subscribe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">granted_qos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.mqtt_listener.MQTTListener.on_subscribe" title="Permalink to this definition"></a></dt>
+<dd><p>Callback method for subscription through self.client.
+Used as a static method here so that self.client can use it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>client</strong> (<em>paho.mqtt.client.Client</em>) – The client calling this method.</p></li>
+<li><p><strong>user_data</strong> – The user data for the established connection.</p></li>
+<li><p><strong>mid</strong> – Currently unknown.</p></li>
+<li><p><strong>granted_qos</strong> (<em>bool</em>) – Whether or not the desired quality of service level has been granted.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lib.mqtt_listener.MQTTListener.subscribe">
+<span class="sig-name descname"><span class="pre">subscribe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">topic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.mqtt_listener.MQTTListener.subscribe" title="Permalink to this definition"></a></dt>
+<dd><p>Subscribes to a topic.
+Acts as a wrapper for paho.mqtt.client.Client.subscribe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>topic</strong> (<em>str</em>) – The topic name.</p></li>
+<li><p><strong>qos</strong> (<em>int</em>) – Desired quality of service level. Defaults to 0.</p></li>
+<li><p><strong>options</strong> – Currently unknown.</p></li>
+<li><p><strong>properties</strong> – Currently unknown.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="lib_mqtt_client.html" class="btn btn-neutral float-left" title="MQTT Client" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="lib_mqtt_sender.html" class="btn btn-neutral float-right" title="MQTT Sender" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Brooklyn Crowe, Jade Godwin, Ricardo Rojo, Noah Starr, Marilyn Marcos, Aaron Moore.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
