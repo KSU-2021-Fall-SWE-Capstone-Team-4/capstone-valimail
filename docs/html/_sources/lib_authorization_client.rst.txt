@@ -1,5 +1,5 @@
-Libraries
-==========
+Authorization Client
+====================
 
 .. toctree::
 

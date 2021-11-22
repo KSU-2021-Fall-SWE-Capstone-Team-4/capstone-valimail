@@ -1,5 +1,5 @@
-Libraries
-==========
+MQTT Client
+===========
 
 .. toctree::
 

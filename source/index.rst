@@ -12,6 +12,9 @@ Welcome to Wolfmail's documentation!
 
    lib_authorization_client
    lib_mqtt_client
+   lib_mqtt_listener
+   lib_mqtt_sender
+   lib_watchdog
 
 Indices and tables
 ==================
