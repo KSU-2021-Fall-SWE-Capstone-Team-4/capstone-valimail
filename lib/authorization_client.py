@@ -9,7 +9,6 @@ import threading
 import logging
 import base64
 import json
-import time
 
 
 class AuthorizationClient(threading.Thread):
@@ -134,7 +133,8 @@ class AuthorizationClient(threading.Thread):
             logging.debug('Message\'s DNS name is not included in the whitelist, auth cancelled')
             return False, None
 
-        # Now that we know the message is from a whitelisted source, we verify its integrity using the authorize_with_timeout method.
+        # Now that we know the message is from a whitelisted source, we verify its integrity using the
+        # authorize_with_timeout method.
         passed_authentication = AuthorizationClient.verify_authentication_with_timeout(message.payload, x5u)
 
         # If no exception has been raised / we have not returned yet, then message passed all the checks.
@@ -149,6 +149,9 @@ class AuthorizationClient(threading.Thread):
             message_payload (dict) : The message payload. Used to get the DNS name and verify.
             dns_name (str) : The DNS name. Used for logging purposes.
         """
+        # Log that we made it this far.
+        logging.debug('Authorizing message with timeout...')
+
         # First, get the context and a queue; this will allow us to return a boolean value from the _authorize method.
         context = multiprocessing.get_context('spawn')
         queue = context.Queue()
@@ -167,7 +170,11 @@ class AuthorizationClient(threading.Thread):
             return False
 
         # Process concluded normally, gather the output from the queue.
-        return queue.get()
+        result = queue.get()
+
+        # Log the result and return.
+        logging.debug(f'Message was{" " if result else " not "}authenticated')
+        return result
 
     @staticmethod
     def _authorize(queue, message_payload, parent_thread_id):
