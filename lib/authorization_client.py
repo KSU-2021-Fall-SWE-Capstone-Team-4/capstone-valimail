@@ -186,9 +186,6 @@ class AuthorizationClient(threading.Thread):
             message_payload (dict) : The message payload. Used to get the DNS name and verify.
             parent_thread_id (int) : The id of the parent thread. Used for logging purposes.
         """
-        # Set the queue value to false (in case of an unexpected exception)
-        queue.put(False)
-
         # Run the verification
         try:
             Authentication.verify(message_payload)
@@ -196,6 +193,13 @@ class AuthorizationClient(threading.Thread):
         # Failed, log the error.
         except TLSAError as e:
             logger.log_outside_main_process(logging.DEBUG, repr(e), parent_thread_id)
+            queue.put(False)
+            return
+
+        # Unexpected exception, log and return..
+        except Exception as e:
+            logger.log_outside_main_process(logging.DEBUG, f'Unexpected exception: {repr(e)}', parent_thread_id)
+            queue.put(False)
             return
 
         # Passed, set the queue value to true

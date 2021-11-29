@@ -1,5 +1,6 @@
 from unittest import TestLoader, TextTestRunner
 
+
 def initialize_testing_suite():
     """
     Initializes (and runs) the testing suite.

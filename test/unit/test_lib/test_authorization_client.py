@@ -697,11 +697,6 @@ class TestAuthorizationClient(TestCase):
     @mock.patch("lib.util.logger.log_outside_main_process")
     def test_authorize_pass(self, m_lomp, m_v):
         """lib.authorization_client.AuthorizationClient._authorize.pass"""
-        # Set side effect for Authentication.verify
-        def authentication_verify_side_effect(*args, **kwargs):
-            pass
-        m_v.side_effect = authentication_verify_side_effect
-
         # Create mock for queue
         queue_put_mock = MagicMock()
         queue_mock = MagicMock(put=queue_put_mock)
@@ -717,8 +712,8 @@ class TestAuthorizationClient(TestCase):
     @mock.patch("dane_discovery.exceptions.TLSAError.__init__")
     @mock.patch("dane_jwe_jws.authentication.Authentication.verify")
     @mock.patch("lib.util.logger.log_outside_main_process")
-    def test_authorize_pass(self, m_lomp, m_v, m_i):
-        """lib.authorization_client.AuthorizationClient._authorize.pass"""
+    def test_authorize_fail_tlsa(self, m_lomp, m_v, m_i):
+        """lib.authorization_client.AuthorizationClient._authorize.fail_tlsa"""
         # Set return value to None so as to not cause errors
         m_i.return_value = None
 
@@ -738,6 +733,30 @@ class TestAuthorizationClient(TestCase):
         m_v.assert_called_with('unusually readable payload')
         queue_put_mock.assert_called_with(False)
 
+
+    @mock.patch("dane_discovery.exceptions.TLSAError.__init__")
+    @mock.patch("dane_jwe_jws.authentication.Authentication.verify")
+    @mock.patch("lib.util.logger.log_outside_main_process")
+    def test_authorize_fail_unexpected(self, m_lomp, m_v, m_i):
+        """lib.authorization_client.AuthorizationClient._authorize.fail_unexpected"""
+        # Set return value to None so as to not cause errors
+        m_i.return_value = None
+
+        # Set side effect for Authentication.verify
+        def authentication_verify_side_effect(*args, **kwargs):
+            raise Exception()
+        m_v.side_effect = authentication_verify_side_effect
+
+        # Create mock for queue
+        queue_put_mock = MagicMock()
+        queue_mock = MagicMock(put=queue_put_mock)
+
+        # Run the method.
+        AuthorizationClient._authorize(queue_mock, 'unusually readable payload', 3)
+
+        # Run assertions
+        m_v.assert_called_with('unusually readable payload')
+        queue_put_mock.assert_called_with(False)
 
 
 class MockMultiprocessingContext:
