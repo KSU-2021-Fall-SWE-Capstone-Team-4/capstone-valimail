@@ -1,5 +1,6 @@
 from dane_jwe_jws.authentication import Authentication
 from dane_discovery.exceptions import TLSAError
+from jwcrypto.jws import InvalidJWSSignature
 from binascii import Error as ASCIIError
 from lib.util import environment, logger
 from lib.mqtt_sender import MQTTSender
@@ -190,9 +191,15 @@ class AuthorizationClient(threading.Thread):
         try:
             Authentication.verify(message_payload)
 
-        # Failed, log the error.
+        # No TLSA error.
         except TLSAError as e:
-            logger.log_outside_main_process(logging.DEBUG, repr(e), parent_thread_id)
+            logger.log_outside_main_process(logging.DEBUG, 'No TLSA Records recognized for dns name' parent_thread_id)
+            queue.put(False)
+            return
+
+        # Invalid signature.
+        except InvalidJWSSignature:
+            logger.log_outside_main_process(logging.DEBUG, 'JWS Signature was not accepted')
             queue.put(False)
             return
 
