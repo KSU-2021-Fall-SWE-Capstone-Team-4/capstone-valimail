@@ -193,13 +193,13 @@ class AuthorizationClient(threading.Thread):
 
         # No TLSA error.
         except TLSAError as e:
-            logger.log_outside_main_process(logging.DEBUG, 'No TLSA Records recognized for dns name' parent_thread_id)
+            logger.log_outside_main_process(logging.DEBUG, 'No TLSA Records recognized for dns name', parent_thread_id)
             queue.put(False)
             return
 
         # Invalid signature.
         except InvalidJWSSignature:
-            logger.log_outside_main_process(logging.DEBUG, 'JWS Signature was not accepted')
+            logger.log_outside_main_process(logging.DEBUG, 'JWS Signature was not accepted', parent_thread_id)
             queue.put(False)
             return
 
