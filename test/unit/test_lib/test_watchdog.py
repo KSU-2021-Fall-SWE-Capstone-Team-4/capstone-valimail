@@ -5,12 +5,14 @@ from lib.watchdog import Watchdog
 from lib import watchdog
 from time import sleep
 
+
 class TestWatchdog(TestCase):
 
 
     def test_run(self):
         """lib.watchdog.Watchdog.run.normal_terminate"""
-        # Initialize the subprocess, which will allow us to test for a timeout and avoid the possibility of getting caught in an infinite loop.
+        # Initialize the subprocess, which will allow us to test for a timeout and avoid the possibility of
+        # getting caught in an infinite loop.
         process = Process(target=TestWatchdog.run_process_submethod)
         process.start()
 
@@ -42,8 +44,3 @@ class TestWatchdog(TestCase):
 
         # Replace threading in watchdog with our own thing that can be more easily mocked.
         watchdog.threading = MagicMock(enumerate=enumerate_limited, _MainThread=str)
-
-
-# Running part.
-if __name__ == '__main__':
-    unittest.main()

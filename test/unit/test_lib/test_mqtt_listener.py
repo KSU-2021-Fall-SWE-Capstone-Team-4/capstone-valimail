@@ -2,6 +2,7 @@ from unittest import mock, TestCase
 from unittest.mock import MagicMock
 from lib.mqtt_listener import MQTTListener
 
+
 class TestMQTTListener(TestCase):
 
 
@@ -88,8 +89,3 @@ class TestMQTTListener(TestCase):
 
         # Run assertions
         m_hm.assert_called_with(message='CORN')
-
-
-# Running part.
-if __name__ == '__main__':
-    unittest.main()

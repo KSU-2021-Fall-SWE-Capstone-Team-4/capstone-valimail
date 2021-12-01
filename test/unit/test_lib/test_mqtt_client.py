@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 from lib.mqtt_client import MQTTClient
 from lib import mqtt_client
 
+
 class TestMQTTClient(TestCase):
 
 
@@ -56,8 +57,3 @@ class MockPahoMQTT:
 
     def Client(self):
         return self.mock_client
-
-
-# Running part.
-if __name__ == '__main__':
-    unittest.main()

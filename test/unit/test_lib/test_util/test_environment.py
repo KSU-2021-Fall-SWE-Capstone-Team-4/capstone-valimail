@@ -3,6 +3,7 @@ from unittest import mock, TestCase
 from lib.util import environment
 import os
 
+
 class TestEnvironment(TestCase):
 
     OS_ENVIRON_MOCK =  {
@@ -184,8 +185,3 @@ class TestEnvironment(TestCase):
         # Run the get method
         with self.assertRaises(UndefinedVariableError):
             environment.get('FAKE_MOCK')
-
-
-# Running part.
-if __name__ == '__main__':
-    unittest.main()

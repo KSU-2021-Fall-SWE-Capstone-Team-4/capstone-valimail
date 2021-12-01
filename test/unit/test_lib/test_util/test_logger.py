@@ -1,6 +1,7 @@
 from unittest import mock, TestCase
 from lib.util import logger
 
+
 class TestLogger(TestCase):
 
 
@@ -11,9 +12,3 @@ class TestLogger(TestCase):
         logger.basic_setup()
         # Run enable_debug_mode.
         logger.enable_debug_mode()
-
-
-
-# Running part.
-if __name__ == '__main__':
-    unittest.main()

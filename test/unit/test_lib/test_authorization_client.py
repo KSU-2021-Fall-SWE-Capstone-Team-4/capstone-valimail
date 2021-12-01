@@ -7,6 +7,7 @@ from json import JSONDecodeError
 from dane_discovery.exceptions import TLSAError
 from binascii import Error as ASCIIError
 
+
 class TestAuthorizationClient(TestCase):
 
 
@@ -774,7 +775,3 @@ class MockMultiprocessingContext:
     def Process(self, **kwargs):
         self.process_called_with.append(kwargs)
         return self.process_mock
-
-# Running part.
-if __name__ == '__main__':
-    unittest.main()

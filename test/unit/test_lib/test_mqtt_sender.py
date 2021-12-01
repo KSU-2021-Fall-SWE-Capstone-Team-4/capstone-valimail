@@ -2,6 +2,7 @@ from unittest import mock, TestCase
 from unittest.mock import MagicMock
 from lib.mqtt_sender import MQTTSender
 
+
 class TestMQTTSender(TestCase):
 
 
@@ -130,8 +131,3 @@ class MockPahoClient:
 
     def loop_stop(self, *args, **kwargs):
         self.loop_stop_call_count += 1
-
-
-# Running part.
-if __name__ == '__main__':
-    unittest.main()
