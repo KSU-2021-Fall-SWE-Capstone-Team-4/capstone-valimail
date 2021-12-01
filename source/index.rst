@@ -10,6 +10,8 @@ Welcome to Wolfmail's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   Installation
+   Demo
    lib_authorization_client
    lib_mqtt_client
    lib_mqtt_listener
