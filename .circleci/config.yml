@@ -1,0 +1,24 @@
+  version: 2.1
+
+  orbs:
+    python: circleci/python@0.3.2
+
+  jobs:
+    build-and-test:
+      executor: python/default
+      environment:
+        PYTHONPATH-./capstone-valimail/test
+
+      steps:
+        - checkout
+        - python/install-deps
+        - python/test
+
+  workflows:
+    main:
+      jobs:
+        - build-and-test
+
+
+# https://www.youtube.com/watch?v=0Ng2622UBe8&t=258s
+# https://www.jetbrains.com/help/pycharm/viewing-code-coverage-results.html
