@@ -16,6 +16,25 @@
         - python/save-cache
         - python/test
 
+  lint-and-coverage:
+    executor: python/default
+    environment:
+      PYTHONPATH=./capstone-valimail/test
+    steps:
+      - checkout
+      - python/load-cache
+      - python/install-deps
+      - python/save-cache
+#      - run:
+#          name: Linter
+#          command: |
+#            flake8 src/
+#            flake8 test/
+      - run:
+          name: Coverage
+          command: |
+            coverage run
+            coverage report
 
 
   workflows:
