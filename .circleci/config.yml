@@ -8,18 +8,18 @@
     build-and-test:
       executor: python/default
       environment:
-        PYTHONPATH=./capstone-valimail/test
+        PYTHONPATH=./capstone-valimail/test/unit
       steps:
         - checkout
         - python/load-cache
         - python/install-deps
         - python/save-cache
-        - python/test
+        - python/test/unit
 
   lint-and-coverage:
     executor: python/default
     environment:
-      PYTHONPATH=./capstone-valimail/test
+      PYTHONPATH=./capstone-valimail/test/unit
     steps:
       - checkout
       - python/load-cache
