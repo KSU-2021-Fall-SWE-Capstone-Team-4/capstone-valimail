@@ -7,7 +7,7 @@
     build-and-test:
       executor: python/default
       environment:
-        PYTHONPATH-./capstone-valimail/test/unit/test_runner.py
+        PYTHONPATH-./capstone-valimail/test/unit/test_lib/test_util/test_environment.py
 
       steps:
         - checkout
