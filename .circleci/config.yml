@@ -18,7 +18,7 @@
             name: Running tests
             working_directory: ./capstone-valimail
             command: |
-              python3 -m unittest discover -v test/unit
+              python3 -m unittest discover -v
 
   lint-and-coverage:
     executor: python/default
