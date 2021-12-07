@@ -20,7 +20,7 @@
             command: |
               python3 -m unittest discover -v
               python3 -c "import os; print(os.path.abspath(os.curdir))"
-              python3 -c "import os; print(os.listdir('.'))"
+              python3 -c "import os; print(os.listdir('..'))"
 
   lint-and-coverage:
     executor: python/default
