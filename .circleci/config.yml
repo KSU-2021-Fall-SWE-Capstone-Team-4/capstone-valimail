@@ -19,6 +19,8 @@
             working_directory: ./capstone-valimail
             command: |
               python3 -m unittest discover -v
+              python -c "import os; print(os.path.abspath(os.curdir))"
+
 
   lint-and-coverage:
     executor: python/default
