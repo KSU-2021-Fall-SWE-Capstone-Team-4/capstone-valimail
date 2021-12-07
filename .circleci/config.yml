@@ -8,7 +8,7 @@
     build-and-test:
       executor: python/default
       environment:
-        PYTHONPATH=./capstone-valimail
+        PYTHONPATH=.
       steps:
         - checkout
         - python/load-cache
@@ -16,16 +16,14 @@
         - python/save-cache
         - run:
             name: Running tests
-            working_directory: ./capstone-valimail
+            working_directory: .
             command: |
               python3 -m unittest discover -v
-              python3 -c "import os; print(os.path.abspath(os.curdir))"
-              python3 -c "import os; print(os.listdir('..'))"
 
   lint-and-coverage:
     executor: python/default
     environment:
-      PYTHONPATH=./capstone-valimail
+      PYTHONPATH=.
     steps:
       - checkout
       - python/load-cache
