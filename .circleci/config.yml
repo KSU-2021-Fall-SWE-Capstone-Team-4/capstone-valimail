@@ -17,8 +17,9 @@
         - run:
             name: Running tests
             working_directory: .
-            command: |
-              python3 -m unittest discover -v
+            command: python3 -m xmlrunner discover -v --output-file test/unit/test_results.xml
+        - store_test_results:
+            path: test/unit/test_results.xml
 
   lint-and-coverage:
     executor: python/default
